@@ -16,7 +16,7 @@ A database containing an extensive set of results can be found here: http://doye
 
 # Installation
 
-Clone the repository into your local system using
+Clone the repository into your local system using ```https://github.com/HerrHruby/energy_landscapes.git```
 
 I may eventually add support for installation via pip.
 
