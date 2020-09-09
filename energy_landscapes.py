@@ -15,6 +15,12 @@ def LJ(r):
     return 4 * (((1 / r) ** 12) - ((1 / r) ** 6))
 
 
+def morse(r, a=6):
+    """Returns the Morse potential"""
+
+    return np.exp(-2*a*(r - 1)) - 2*np.exp(-a*(r - 1))
+
+
 def get_length(l):
     """Returns the length of a vector"""
 
@@ -46,7 +52,7 @@ def generate_particles(n, L):
     return vec_dict
 
 
-def generate_energy_dict(vec_dict):
+def generate_energy_dict(vec_dict, mode):
     """Generates a dictionary mapping particle ID to the sum of all pairwise interaction energies
     involving the given particle"""
 
@@ -58,13 +64,16 @@ def generate_energy_dict(vec_dict):
             if key_j != key_i:
                 diff = vector_difference(val_i, val_j)
                 length = get_length(diff)
-                energy += LJ(length)
+                if mode == 'Morse':
+                    energy += morse(length)
+                else:
+                    energy += LJ(length)
         energy_dict[key_i] = energy
 
     return energy_dict
 
 
-def update_energy_dict(energy_dict, vec_dict, index):
+def update_energy_dict(energy_dict, vec_dict, index, mode):
     """Re-computes the sum of pairwise interactions involving a particle with ID = index.
     Returns the modified energy_dict"""
 
@@ -73,19 +82,22 @@ def update_energy_dict(energy_dict, vec_dict, index):
         if key != index:
             diff = vector_difference(vec_dict[index], val)
             length = get_length(diff)
-            energy += LJ(length)
+            if mode == 'Morse':
+                energy += morse(length)
+            else:
+                energy += LJ(length)
     energy_dict[index] = energy
 
     return energy_dict
 
 
-def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha):
+def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha, mode):
     """Performs Metropolis Monte Carlo on the system to locate minima, with the option to perform simulated annealing"""
 
     count = 0
     # initialise the appropriate dictionaries
     vec_dict = generate_particles(n, L)  # Generate particle coordinates
-    energy_dict = generate_energy_dict(vec_dict)
+    energy_dict = generate_energy_dict(vec_dict, mode)
     # compute the starting energy
     init_energy = 0.5 * sum(energy_dict.values())  # factor of 0.5 to account for double counting
 
@@ -101,7 +113,7 @@ def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha):
         # Update coordinates and energy after perturbation
         init_value = vec_dict[random_particle][random_coordinate]
         vec_dict[random_particle][random_coordinate] = init_value + move
-        energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle)
+        energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle, mode)
         update_energy = 0.5 * sum(energy_dict.values())
 
         count += 1
@@ -121,7 +133,7 @@ def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha):
             # if move is rejected, reverse the move and then re-compute the energy dictionary
             else:
                 vec_dict[random_particle][random_coordinate] = init_value - move
-                energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle)
+                energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle, mode)
 
     # lists to record final coordinates
     x_data = []
@@ -137,7 +149,7 @@ def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha):
     return x_data, y_data, z_data, init_energy
 
 
-def run_el(n, trials, cycles, amplitude, temperature, L, output, anneal, alpha):
+def run_el(n, trials, cycles, amplitude, temperature, L, output, anneal, alpha, mode):
     """Driver function for metropolis. Repeats the caclulation and writes the results to file"""
 
     # sys.argv inputs
@@ -147,6 +159,10 @@ def run_el(n, trials, cycles, amplitude, temperature, L, output, anneal, alpha):
     # Write to file
     f = open(output_txt, 'w+')
     f.write('Exploring Energy Surfaces: ' + str(n) + '-coordinate system' + '\n')
+    if mode == 'Morse':
+        f.write('Potential: MORSE' + '\n')
+    else:
+        f.write('Potential: LENNARD-JONES' + '\n')
     if anneal:
         f.write('Using Simulated Annealing')
     f.close()
@@ -156,7 +172,7 @@ def run_el(n, trials, cycles, amplitude, temperature, L, output, anneal, alpha):
     min_energy = 0
     min_index = 0
     for i in range(0, trials):
-        met_output = metropolis(n, cycles, amplitude, temperature, L, anneal, alpha)
+        met_output = metropolis(n, cycles, amplitude, temperature, L, anneal, alpha, mode)
         if met_output[3] <= min_energy:
             min_energy = met_output[3]
             min_index = i
