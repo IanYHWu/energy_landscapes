@@ -20,10 +20,10 @@ with open(FILE, 'rb') as fp:
 
 if TRIAL == 'min':
     TRIAL = min_index
-    print("Displaying minimum energy configuration - trial {} with energy {}".format(min_index, min_energy))
+    print("Displaying minimum energy configuration - trial {} with energy {}".format(min_index + 1, min_energy))
 else:
-    TRIAL = int(TRIAL)
-    print("Displaying trial {}".format(TRIAL))
+    TRIAL = int(TRIAL) - 1
+    print("Displaying trial {}".format(TRIAL + 1))
 
 selected_trial = coords_list[TRIAL]
 
