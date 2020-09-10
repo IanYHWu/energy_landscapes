@@ -9,14 +9,14 @@ Several empirical models for intermolecular potentials exist, including the Lenn
 
 Exploring such high-dimensional energy landscapes is a challenging task, and one possible approach involves the use of Markov Chain Monte Carlo methods such as Metropolis-Hastings, which uses importance sampling to extract the most probable - and thus most stable - particle configurations. There is no guarentee that the minima found will be the global minimum, so repeating the search many times may be necessary. Another approach to locating the global minimum involves using simulated annealing, where the temperature parameter is decreased throughout the experiment in order to increase convergence to the global minimum. 
 
-The ```samples``` folder contains the results for two experiments - one for a four-particle cluster, and another for a seven-particle cluster. 
+The ```samples``` folder contains the results for an experiment for a 7-particle cluster with the Lennard Jones potential. Trial 10, with an energy of -16.23, corresponds to the pentagonal bipyramidal geometry, while Trial 7, with an energy of -15.74, corresponds to the capped trigonal prismatic geometry. Both are known stable structures for 7-coordinate geometries, with the pentagonal bipyramidal structure representing the global energy minimum. Note that these may not represent fully converged structures - indeed, the "official" energy minimum is -16.51, which corresponds to a better-converged pentagonal bipyramidal structure.
 
 A database containing an extensive set of results can be found here: http://doye.chem.ox.ac.uk/jon/structures/LJ/tables.150.html 
 
 
 # Installation
 
-Clone the repository into your local system using
+Clone the repository into your local system using ```https://github.com/HerrHruby/energy_landscapes.git```
 
 I may eventually add support for installation via pip.
 
