@@ -18,7 +18,7 @@ def LJ(r):
 def morse(r, a=6):
     """Returns the Morse potential"""
 
-    return np.exp(-2*a*(r - 1)) - 2*np.exp(-a*(r - 1))
+    return np.exp(-2 * a * (r - 1)) - 2 * np.exp(-a * (r - 1))
 
 
 def get_length(l):
@@ -73,24 +73,6 @@ def generate_energy_dict(vec_dict, mode):
     return energy_dict
 
 
-def update_energy_dict(energy_dict, vec_dict, index, mode):
-    """Re-computes the sum of pairwise interactions involving a particle with ID = index.
-    Returns the modified energy_dict"""
-
-    energy = 0
-    for key, val in vec_dict.items():
-        if key != index:
-            diff = vector_difference(vec_dict[index], val)
-            length = get_length(diff)
-            if mode == 'Morse':
-                energy += morse(length)
-            else:
-                energy += LJ(length)
-    energy_dict[index] = energy
-
-    return energy_dict
-
-
 def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha, mode):
     """Performs Metropolis Monte Carlo on the system to locate minima, with the option to perform simulated annealing"""
 
@@ -113,7 +95,7 @@ def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha, mode):
         # Update coordinates and energy after perturbation
         init_value = vec_dict[random_particle][random_coordinate]
         vec_dict[random_particle][random_coordinate] = init_value + move
-        energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle, mode)
+        energy_dict = generate_energy_dict(vec_dict, mode)
         update_energy = 0.5 * sum(energy_dict.values())
 
         count += 1
@@ -133,7 +115,7 @@ def metropolis(n, cycles, amplitude, temperature, L, anneal, alpha, mode):
             # if move is rejected, reverse the move and then re-compute the energy dictionary
             else:
                 vec_dict[random_particle][random_coordinate] = init_value - move
-                energy_dict = update_energy_dict(energy_dict, vec_dict, random_particle, mode)
+                energy_dict = generate_energy_dict(vec_dict, mode)
 
     # lists to record final coordinates
     x_data = []
@@ -194,5 +176,3 @@ def run_el(n, trials, cycles, amplitude, temperature, L, output, anneal, alpha, 
         pickle.dump(output_coords_list, fp)
         pickle.dump(min_index, fp)
         pickle.dump(min_energy, fp)
-
-
