@@ -1,6 +1,6 @@
 # Exploring Energy Landscapes for Particle Clusters
 
-This Python program computes the energy minima and corresponding structures of molecular clusters, employing either the Lennard-Jones or the Morse potentials to model intermolecular interations. Exploration of the energy landscape is done using Metropolis Monte Carlo, with the option of employing simulated annealing to help locate global energy minima.
+This Python program computes the energy minima and corresponding structures of molecular clusters, employing either the Lennard-Jones or the Morse potentials to model intermolecular interations. Exploration of the energy landscape is done using Metropolis Monte Carlo, with the option of adding simulated annealing to help locate global energy minima.
 
 
 # Introduction
@@ -19,9 +19,7 @@ A database containing an extensive set of results can be found here: http://doye
 
 # Installation
 
-Clone the repository into your local system using ```https://github.com/HerrHruby/energy_landscapes.git```
-
-I may eventually add support for installation via pip.
+Clone the repository into your local system using ```https://github.com/IanYHWu/energy_landscapes.git```
 
 
 # Usage
